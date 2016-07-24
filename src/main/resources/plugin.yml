@@ -1,4 +1,5 @@
-main: me.theeninja.bungeeteleport
+main: me.theeninja.bungeeteleport.BungeeTeleport
 author: TheeNinja
 version: 1.0
 description: A plugin that enhances the connections between servers on BungeeCord through signs.
+name: BungeeTeleport

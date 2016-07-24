@@ -5,7 +5,7 @@
 	<artifactId>bungeeteleport</artifactId>
 	<version>1.0</version>
 	<name>BungeeTeleport</name>
-	<description>A plugin that enhances the connections between servers on BungeeCord through signs.	</description>
+	<description>A plugin that enhances the connections between servers on BungeeCord through signs.</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

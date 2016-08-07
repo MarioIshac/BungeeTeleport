@@ -10,16 +10,15 @@ import org.bukkit.event.block.SignChangeEvent;
 public class SignBuildListener implements Listener {
 	@EventHandler
 	public void onSignBuild(SignChangeEvent e) {
-		Sign s = (Sign) e.getBlock().getState();
-		e.getPlayer().sendMessage("waddup");
-		if (s.getLine(0).equalsIgnoreCase("[Bungee]")) {
-			e.getPlayer().sendMessage("3");
+		if (!e.getLine(0).equalsIgnoreCase("[BungeeTeleport]")) {
 			return;
 		}
 		Player p = e.getPlayer();
 		if (!p.isOp()) {
-			p.sendMessage("No permission.");
+			p.sendMessage("You are not an operator; sign not created.");
+			return;
 		}
-		s.setLine(0, ChatColor.DARK_PURPLE + "[BungeeTeleport");
+		e.setLine(0, ChatColor.DARK_PURPLE + "[BungeeTeleport]");
+		
 	}
 }

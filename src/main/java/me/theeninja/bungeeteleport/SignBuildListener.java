@@ -1,7 +1,6 @@
 package me.theeninja.bungeeteleport;
 
 import org.bukkit.ChatColor;
-import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,6 +18,7 @@ public class SignBuildListener implements Listener {
 			return;
 		}
 		e.setLine(0, ChatColor.DARK_PURPLE + "[BungeeTeleport]");
-		
+		e.setLine(2, ChatColor.RED + e.getLine(2));
+		e.setLine(3, ChatColor.RED + e.getLine(3));
 	}
 }

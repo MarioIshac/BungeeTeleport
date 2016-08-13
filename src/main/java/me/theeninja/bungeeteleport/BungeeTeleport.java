@@ -11,6 +11,7 @@ public class BungeeTeleport extends JavaPlugin {
 		plugin = this;
 		ConfigurationHandler.saveDefaultConfig();
 		registerListeners();
+		registerPluginMessenger();
 	}
 	@Override
 	public void onDisable() {
@@ -21,5 +22,10 @@ public class BungeeTeleport extends JavaPlugin {
 	}
 	public void registerListeners() {
 		getServer().getPluginManager().registerEvents(new SignBuildListener(), this);
+		getServer().getPluginManager().registerEvents(new SignClickListener(), this);
+	}
+	public void registerPluginMessenger() {
+		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+		getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new BungeeServerTeleport());
 	}
 }

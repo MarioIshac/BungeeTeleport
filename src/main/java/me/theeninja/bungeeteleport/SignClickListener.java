@@ -14,9 +14,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 public class SignClickListener implements Listener {
+	// Stores list of servers - updated when player attempts to connect to a server
 	public static List<String> serverList; 
 	@EventHandler
 	public void onSignClick(PlayerInteractEvent e) {
+		// Otherwise, two events are thrown as opposed to one
 		if (!(e.getHand().equals(EquipmentSlot.HAND))) return;
 		e.getPlayer().sendMessage("Event has been called.");
 		if (!(e.getAction() == Action.RIGHT_CLICK_BLOCK)) {
@@ -35,11 +37,11 @@ public class SignClickListener implements Listener {
 		e.getPlayer().sendMessage("Server pre-instance creation is: " + sign.getLine(1));
 		ConnectPlayer connectPlayer = new ConnectPlayer(e.getPlayer(), sign.getLine(1));
 		connectPlayer.updateServerList();
-		Bukkit.getScheduler().runTaskLater(BungeeTeleport.getInstance(), new Runnable() {
+		Bukkit.getScheduler().runTaskLater(BungeeTeleport.getInstance(), new Runnable() {			
 			@Override
 			public void run() {
 				connectPlayer.connectPlayer();
-			}			
+			}
 		}, 10);
 	}
 	private boolean signCheck(Sign sign) {

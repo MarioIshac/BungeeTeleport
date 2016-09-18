@@ -26,6 +26,6 @@ public class BungeeTeleport extends JavaPlugin {
 	}
 	public void registerPluginMessenger() {
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-		getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new BungeeServerTeleport());
+		getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new ConnectPlayer());
 	}
 }

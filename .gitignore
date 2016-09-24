@@ -1,4 +1,17 @@
+# .gitignore file specifies which directories should not be pushed
+# to the git repostiory.
+
+# Maven Projects
 /target/
+
 /.settings/
+
+# Eclipse Projects
 .project
 
+/bin/
+
+# IDEA Projects
+/.idea/
+
+/RunConfigurations/

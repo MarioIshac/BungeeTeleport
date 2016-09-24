@@ -1,2 +1,12 @@
-NoPermissionMessage:
-InvalidServerMessage: 
+# When a user does not have permission to use/build a sign, send this message
+NoPermissionUseMessage:
+NoPermissionBuildMessage:
+
+# Send these messages to the player using the sign based on whether a server is valid or no
+InvalidServerMessage:
+ValidServerMessage: 
+
+# Configurable color codes for the [BungeeTeleport] line, server line and comment lines
+ColorCodeFirstLine:
+ColorCodeSecondLine:
+ColorCodeCommentLines:

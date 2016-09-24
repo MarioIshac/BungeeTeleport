@@ -32,5 +32,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/mishac28/Desktop/Gaming/Minecraft/Local Servers/BungeeCoord/prison/plugins/BukkitGames.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

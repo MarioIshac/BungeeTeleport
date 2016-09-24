@@ -12,48 +12,72 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import me.theeninja.bungeeteleport.BungeeTeleport;
 
-public class ConfigurationHandler {
+public class Configuration {
+	
 	private FileConfiguration fileConfiguration = null;
 	private static File file = null;
+	
+	private static Configuration configuration = new Configuration();
+	
 	public void reloadConfiguration() {
+		
 		if (file == null) {
 			file = new File(BungeeTeleport.getInstance().getDataFolder(), "config.yml");
 		}
+		
 		fileConfiguration = YamlConfiguration.loadConfiguration(file);
 
 		Reader defaultStream = null;
+		
 		try {
 			defaultStream = new InputStreamReader(BungeeTeleport.getInstance().getResource("config.yml"), "UTF8");
-		} catch (UnsupportedEncodingException e) {
+		} 
+		
+		catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
+		
 		if (defaultStream != null) {
 			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defaultStream);
 			fileConfiguration.setDefaults(defConfig);
 		}
 	}
+	
 	public FileConfiguration getConfig() {
+		
 		if (fileConfiguration == null) {
 			reloadConfiguration();
 		}
+		
 		return fileConfiguration;
 	}
 	public void saveConfig() {
+		
 		if (fileConfiguration == null || file == null) {
 			return;
 		}
+		
 		try {
 			getConfig().save(file);
-		} catch (IOException exception) {
+		} 
+		catch (IOException exception) {
 			BungeeTeleport.getInstance().getLogger().log(Level.SEVERE, "Configuration could not be saved to " + file, exception);
 		}
 	}
-	public static void saveDefaultConfig() {
+	
+	public void saveDefaultConfig() {
+		
 		if (file == null) {
 			file = new File(BungeeTeleport.getInstance().getDataFolder(), "config.yml");
 		}
+		
 		if (!file.exists()) {            
 			BungeeTeleport.getInstance().saveResource("config.yml", false);
 		}
+	}
+	
+	public static Configuration getInstance() {
+		
+		return configuration;
 	}
 }

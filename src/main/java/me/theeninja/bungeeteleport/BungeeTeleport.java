@@ -19,6 +19,7 @@ import me.theeninja.bungeeteleport.yaml.Configuration;
 
 public class BungeeTeleport extends JavaPlugin {
 	
+	// Instance of plugin
 	private static BungeeTeleport plugin;
 	
 	// Receives instance of configuration manager. Call all methods using
@@ -28,6 +29,13 @@ public class BungeeTeleport extends JavaPlugin {
 	// configurationInstance.getConfig().get<Type>(<Key>)
 	private Configuration configurationInstance = Configuration.getInstance();
 	
+	/**
+	 * Called when plugin is enabled
+	 * -Initializes plugin
+	 * -Sets up default config
+	 * -Registers event listeners/handlers
+	 * -Registers plugin message listeners
+	 */
 	@Override
 	public void onEnable() {
 		
@@ -39,6 +47,9 @@ public class BungeeTeleport extends JavaPlugin {
 		registerPluginMessengerListeners();
 	}
 	
+	/**
+	 * Called when plugin is disabled
+	 */
 	@Override
 	public void onDisable() {
 		

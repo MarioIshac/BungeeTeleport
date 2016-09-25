@@ -47,6 +47,14 @@ public class ConnectPlayerServer implements PluginMessageListener {
 		this.player = player;
 	}
 	
+	/**
+	 * Receives getServers call, and sets serverList variable to the server list
+	 * received
+	 * 
+	 * @param channel (Should be BungeeCord)
+	 * 	      player
+	 *        message
+	 */
 	@Override
 	public void onPluginMessageReceived(String channel, Player player, byte[] message) {
 		

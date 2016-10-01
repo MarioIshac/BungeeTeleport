@@ -31,6 +31,7 @@
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
+		
 	</repositories>
 	
 	<dependencies>
@@ -52,6 +53,12 @@
 			<scope>provided</scope>
 
 		</dependency>
+		
+		<dependency>
+   			<groupId>com.esotericsoftware.yamlbeans</groupId>
+    		<artifactId>yamlbeans</artifactId>
+    		<version>1.09</version>
+		</dependency>
 	</dependencies>
 	
 	<build>
@@ -72,18 +79,6 @@
 				<includes>
 					
 					<include>plugin.yml</include>
-				</includes>
-			</resource>
-			
-			<resource>
-				
-				<!-- Set file path after maven compiling to root of project directory -->
-				<targetPath>.</targetPath>
-				<filtering>true</filtering>
-				<directory>src/main/resources</directory>
-				<includes>
-					
-					<include>config.yml</include>
 				</includes>
 			</resource>
 		</resources>

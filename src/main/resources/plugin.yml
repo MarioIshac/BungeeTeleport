@@ -3,4 +3,8 @@ author: TheeNinja
 version: 1.0
 description: A plugin that enhances the connections between servers on BungeeCord through signs.
 name: BungeeTeleport
-
+commands:
+  bungeeteleport:
+    description: Main command for BungeeTeleport plugin.
+    usage: /<command>
+    permission: bungeeteleport.command

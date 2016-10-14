@@ -1,12 +1,13 @@
 package me.theeninja.bungeeteleport;
 
+import java.util.logging.Level;
+
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.theeninja.bungeeteleport.command.BungeeTeleportCommand;
 import me.theeninja.bungeeteleport.server.ConnectPlayerServer;
 import me.theeninja.bungeeteleport.server.SignClickListenerServer;
-import me.theeninja.bungeeteleport.yaml.Configuration;
-import me.theeninja.bungeeteleport.yaml.ConfigurationManager;
-import me.theeninja.bungeeteleport.yaml.ConfigurationValues;
 
 /**
  * Main class for BungeeTeleport plugin. Contains onEnable()
@@ -29,10 +30,7 @@ public class BungeeTeleport extends JavaPlugin {
 
 	// To access fields in configuration, use 
 	// configurationInstance.getConfig().get<Type>(<Key>)
-	private ConfigurationManager configurationManager;
-
-	private Configuration configuration;
-
+	
 	/**
 	 * Called when plugin is enabled
 	 * -Initializes plugin
@@ -44,13 +42,22 @@ public class BungeeTeleport extends JavaPlugin {
 	public void onEnable() {
 
 		plugin = this;
-		
-		configurationManager = new ConfigurationManager();
-		configuration = configurationManager.getNewConfig("config.yml");
-		
+
 		registerEventListeners();
+		
+		Bukkit.getLogger().log(Level.INFO, "Registered events.");
+		
 		registerPluginMessengerListeners();
-		registerDefaultConfigurationValues();
+		
+		Bukkit.getLogger().log(Level.INFO, "Registered plugin message listeners.");
+		
+		saveDefaultConfig();
+		
+		Bukkit.getLogger().log(Level.INFO, "Registered configuration.");
+		
+		getCommand("bungeeteleport").setExecutor(new BungeeTeleportCommand());
+		
+		Bukkit.getLogger().log(Level.INFO, "Registered commands.");
 	}
 
 	/**
@@ -58,7 +65,7 @@ public class BungeeTeleport extends JavaPlugin {
 	 */
 	@Override
 	public void onDisable() {
-
+		
 		plugin = null;
 	}
 
@@ -88,20 +95,5 @@ public class BungeeTeleport extends JavaPlugin {
 
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 		getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new ConnectPlayerServer());
-	}
-	
-	/**
-	 * Registers default configuration values, following with a config save.
-	 */
-	private void registerDefaultConfigurationValues() {
-		
-		if (ConfigurationManager.isNull(configuration, ConfigurationValues.noPermissionUseMessage.getIdentifier())) 
-			configuration.defaultSet("NoPermissionUseMessage", ConfigurationValues.noPermissionUseMessage);
-
-		if (ConfigurationManager.isNull(configuration, ConfigurationValues.noPermissionBuildMessage.getIdentifier())) 
-			configuration.defaultSet("NoPermissionBuildMessage", ConfigurationValues.noPermissionBuildMessage);
-		
-		
-		configuration.saveConfig();
 	}
 }

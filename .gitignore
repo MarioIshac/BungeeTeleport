@@ -13,5 +13,6 @@
 
 # IDEA Projects
 /.idea/
+BungeeTeleport.iml
 
-/RunConfigurations/
+src/test/

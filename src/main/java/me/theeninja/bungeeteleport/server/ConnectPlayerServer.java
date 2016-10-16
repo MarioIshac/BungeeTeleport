@@ -5,8 +5,8 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import me.theeninja.bungeeteleport.BungeeTeleport;
 import me.theeninja.bungeeteleport.PlaceholderManager;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
@@ -81,25 +81,33 @@ public class ConnectPlayerServer implements PluginMessageListener {
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
 
+        PlaceholderManager.Placeholder serverPlaceholder = new PlaceholderManager.Placeholder("server");
+        serverPlaceholder.setPlaceholderAction(string -> {
+            string = string.replace(serverPlaceholder.getConfigurationRepresentation(), this.server);
+            return string;
+        });
+
+        PlaceholderManager placeholderManager = new PlaceholderManager(new PlaceholderManager.Placeholder[] {serverPlaceholder});
+
         if (SignClickListenerServer.serverList.stream().anyMatch(serverInList -> serverInList.equals(server))) {
-
-            PlaceholderManager.Placeholder serverPlaceholder = new PlaceholderManager.Placeholder("server", (string) -> {
-                String returnString = string.replace("%server%", server);
-                return returnString;
-            });
-
-            PlaceholderManager placeholderManager = new PlaceholderManager(new PlaceholderManager.Placeholder[]{serverPlaceholder});
 
             String successfulConnectionMessage = BungeeTeleport.getInstance().getConfig().getString("SuccessfulConnectionMessage");
             String playerMessage = placeholderManager.replacePlaceholders(successfulConnectionMessage);
             playerMessage = ChatColor.translateAlternateColorCodes('&', playerMessage);
+
             player.sendMessage(playerMessage);
 
             out.writeUTF("Connect");
             out.writeUTF(server);
             player.sendPluginMessage(BungeeTeleport.getInstance(), "BungeeCord", out.toByteArray());
-        } else {
-            /* To be filled */
+        }
+        else {
+
+            String invalidServerMessage = BungeeTeleport.getInstance().getConfig().getString("InvalidServerMessage");
+            String playerMessage = placeholderManager.replacePlaceholders(invalidServerMessage);
+            playerMessage = ChatColor.translateAlternateColorCodes('&', playerMessage);
+
+            player.sendMessage(playerMessage);
         }
     }
 
@@ -107,7 +115,7 @@ public class ConnectPlayerServer implements PluginMessageListener {
      * Updates the list of online servers involved in the BungeeCord
      * network.
      */
-    public void updateServerList() {
+    void updateServerList() {
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("GetServers");

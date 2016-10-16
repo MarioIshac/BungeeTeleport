@@ -58,9 +58,7 @@ public class SignClickListenerServer implements Listener {
         // Connec the player 1/2 of a second later; otherwise the server
         // list would not be updated in time
         // * subject to change
-        Bukkit.getScheduler().runTaskLater(BungeeTeleport.getInstance(), () -> {
-            connectPlayer.connectPlayer();
-        }, 10);
+        Bukkit.getScheduler().runTaskLater(BungeeTeleport.getInstance(), connectPlayer::connectPlayer, 10);
     }
 
     /**

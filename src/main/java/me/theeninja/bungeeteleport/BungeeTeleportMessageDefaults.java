@@ -3,7 +3,9 @@ package me.theeninja.bungeeteleport;
 import org.bukkit.ChatColor;
 
 /**
- * Created by TheeNinja on 10/15/2016.
+ * Class containting global plugin variables for messages
+ *
+ * @author TheeNinja
  */
 public class BungeeTeleportMessageDefaults {
 

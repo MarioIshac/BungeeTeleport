@@ -9,3 +9,4 @@ NoPermissionUseMessage: '&5[BungeeTeleport] &dYou do not have permission to use 
 NoPermissionBuildMessage: '&5[BungeeTeleport] &dYou do not have permission to build this BungeeTeleport sign!'
 SuccessfulConnectionMessage: '&5[BungeeTeleport] &dYou have successfully connected to %server%!'
 SuccessfulBuildMessage: '&5[BungeeTeleport] &dYou have successfully built a BungeeTeleport sign!'
+InvalidServerMessage: '&5[BungeeTeleport] &d%server% is not a valid server to connect to!'

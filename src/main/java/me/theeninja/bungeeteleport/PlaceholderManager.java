@@ -1,8 +1,8 @@
 package me.theeninja.bungeeteleport;
 
-/**
- * Created by TheeNinja on 10/15/2016.
- */
+import org.bukkit.Bukkit;
+
+import java.util.logging.Level;
 
 /**
  * Utility class for the BungeeTeleport plugin
@@ -32,10 +32,18 @@ public class PlaceholderManager {
 
         for (Placeholder placeholder : registeredPlaceholders) {
 
+            if (placeholder.getPlaceholderAction() == null) {
+
+                Bukkit.getLogger().log(Level.WARNING,
+                        "Placeholder issue occurred, failed to find replacement function for " + placeholder.getConfigurationRepresentation() + " please contact developer. " +
+                                "This is NOT a user-caused issue.");
+                continue;
+            }
+
             string = placeholder.getPlaceholderAction().replace(string);
         }
 
-        return null;
+        return string;
     }
 
     /**
@@ -64,6 +72,7 @@ public class PlaceholderManager {
 
         private String representation;
         private PlaceholderReplaceAction replaceAction;
+        private String configurationRepresentation;
 
         /**
          * Constructor for producing attributes specific to placeholder.
@@ -74,8 +83,32 @@ public class PlaceholderManager {
         public Placeholder(String representation, PlaceholderReplaceAction replaceAction) {
 
             this.representation = representation;
+            this.configurationRepresentation = "%" + representation + "%";
             this.replaceAction = replaceAction;
         }
+
+        public Placeholder(String representation) {
+
+            this.representation = representation;
+            this.configurationRepresentation = "%" + representation + "%";
+        }
+
+        public void setRepresentation(String representation) {
+
+            this.representation = representation;
+        }
+
+        public String getConfigurationRepresentation() {
+
+            return configurationRepresentation;
+        }
+
+        public void setPlaceholderAction(PlaceholderReplaceAction replaceAction) {
+
+            this.replaceAction = replaceAction;
+        }
+
+
 
         /**
          * @return Placeholder representation

@@ -25,7 +25,7 @@ import me.theeninja.bungeeteleport.BungeeTeleport;
  */
 
 public class SignClickListenerServer implements Listener {
-	
+
 	// Stores list of servers - updated when player attempts to connect to a server	
 	public static List<String> serverList; 
 	
@@ -63,7 +63,8 @@ public class SignClickListenerServer implements Listener {
 		Bukkit.getScheduler().runTaskLater(BungeeTeleport.getInstance(), new Runnable() {			
 			@Override
 			public void run() {
-				connectPlayer.connectPlayer();
+
+                connectPlayer.connectPlayer();
 			}
 		}, 10);
 	}
@@ -78,6 +79,7 @@ public class SignClickListenerServer implements Listener {
 	 * @return true if the sign is a valid BungeeTeleport sign, otherwise false
 	 */
 	private boolean signCheck(Sign sign) {
-		return ChatColor.stripColor(sign.getLine(0)).equals("[BungeeTeleport]");
+
+        return ChatColor.stripColor(sign.getLine(0)).equals("[BungeeTeleport]");
 	}
 }

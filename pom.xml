@@ -76,15 +76,15 @@
 					<include>plugin.yml</include>
 				</includes>
 			</resource>
-			
+
 			<resource>
-				
+
 				<!-- Set file path after maven compiling to root of project directory -->
 				<targetPath>.</targetPath>
 				<filtering>true</filtering>
 				<directory>src/main/resources</directory>
 				<includes>
-					
+
 					<include>config.yml</include>
 				</includes>
 			</resource>

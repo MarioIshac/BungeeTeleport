@@ -2,6 +2,7 @@ package me.theeninja.bungeeteleport;
 
 import java.util.logging.Level;
 
+import me.theeninja.bungeeteleport.yaml.ConfigurationHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,12 +26,6 @@ public class BungeeTeleport extends JavaPlugin {
 	// Instance of plugin
 	private static BungeeTeleport plugin;
 
-	// Receives instance of configuration manager. Call all methods using
-	// configurationInstance.<method>
-
-	// To access fields in configuration, use 
-	// configurationInstance.getConfig().get<Type>(<Key>)
-	
 	/**
 	 * Called when plugin is enabled
 	 * -Initializes plugin
@@ -44,20 +39,16 @@ public class BungeeTeleport extends JavaPlugin {
 		plugin = this;
 
 		registerEventListeners();
-		
-		Bukkit.getLogger().log(Level.INFO, "Registered events.");
+        Bukkit.getLogger().log(Level.INFO, "Registered events.");
 		
 		registerPluginMessengerListeners();
-		
-		Bukkit.getLogger().log(Level.INFO, "Registered plugin message listeners.");
-		
-		saveDefaultConfig();
-		
-		Bukkit.getLogger().log(Level.INFO, "Registered configuration.");
+        Bukkit.getLogger().log(Level.INFO, "Registered plugin message listeners.");
 		
 		getCommand("bungeeteleport").setExecutor(new BungeeTeleportCommand());
-		
-		Bukkit.getLogger().log(Level.INFO, "Registered commands.");
+        Bukkit.getLogger().log(Level.INFO, "Registered commands.");
+
+        ConfigurationHandler.setUpDefaultConfig();
+        Bukkit.getLogger().log(Level.INFO, "Registered configuration.");
 	}
 
 	/**

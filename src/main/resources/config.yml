@@ -1,4 +1,11 @@
-NoPermissionUseMessage:
+# NoPermissionUseMessage - Sent when a user does not have permission to use a bungeeteleport sign.
+# NoPermissionBuildMessage - Sent when a user does not have permission to build a bungeeteleport sign.
+# SuccessfulConnectionMessage - Sent when a user successfully connects to another server on the network through BungeeTeleport
+# # # # # # # # #
+# Placeholders:
+# %server% - server the player is connecting to
 
-NoPermissionBuildMessage:
-
+NoPermissionUseMessage: '&5[BungeeTeleport] &dYou do not have permission to use this BungeeTeleport sign!'
+NoPermissionBuildMessage: '&5[BungeeTeleport] &dYou do not have permission to build this BungeeTeleport sign!'
+SuccessfulConnectionMessage: '&5[BungeeTeleport] &dYou have successfully connected to %server%!'
+SuccessfulBuildMessage: '&5[BungeeTeleport] &dYou have successfully built a BungeeTeleport sign!'

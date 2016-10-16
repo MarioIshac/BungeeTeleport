@@ -9,7 +9,7 @@ package me.theeninja.bungeeteleport.minigame;
  */
 
 public interface ConnectPlayerMinigame {
-	
+
 	/**
 	 * Implementation for whether the player can connect
 	 * to minigame server or no.
@@ -18,6 +18,7 @@ public interface ConnectPlayerMinigame {
 	 * 		   Default: true
 	 */
 	default boolean canConnect() {
-		return true;
+
+        return true;
 	}
 }

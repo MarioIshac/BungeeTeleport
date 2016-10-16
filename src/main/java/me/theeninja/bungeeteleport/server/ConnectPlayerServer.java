@@ -3,6 +3,8 @@ package me.theeninja.bungeeteleport.server;
 import java.util.Arrays;
 import java.util.logging.Level;
 
+import me.theeninja.bungeeteleport.PlaceholderManager;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -83,7 +85,20 @@ public class ConnectPlayerServer implements PluginMessageListener {
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		
 		if (SignClickListenerServer.serverList.stream().anyMatch(serverInList -> serverInList.equals(server))) {
-			out.writeUTF("Connect");
+
+            PlaceholderManager.Placeholder serverPlaceholder = new PlaceholderManager.Placeholder("server", (string) -> {
+                String returnString = string.replace("server", server);
+                return returnString;
+            });
+
+            PlaceholderManager placeholderManager = new PlaceholderManager(new PlaceholderManager.Placeholder[] {serverPlaceholder});
+
+            String successfulConnectionMessage = BungeeTeleport.getInstance().getConfig().getString("SuccessfulConnectionMessage");
+            String playerMessage = placeholderManager.replacePlaceholders(successfulConnectionMessage);
+            playerMessage = ChatColor.translateAlternateColorCodes('&', playerMessage);
+            player.sendMessage(playerMessage);
+
+            out.writeUTF("Connect");
 			out.writeUTF(server);
 			player.sendPluginMessage(BungeeTeleport.getInstance(), "BungeeCord", out.toByteArray());
 		}

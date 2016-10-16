@@ -25,18 +25,33 @@ public class PlaceholderManager {
     }
 
     /**
-     *
      * @param string - String including raw placeholders
      * @return string with updated placeholders
      */
     public String replacePlaceholders(String string) {
 
-        for (Placeholder placeholder: registeredPlaceholders) {
+        for (Placeholder placeholder : registeredPlaceholders) {
 
             string = placeholder.getPlaceholderAction().replace(string);
         }
 
         return null;
+    }
+
+    /**
+     * Represents the implementation to override for specific placeholders.
+     *
+     * @author TheeNinja
+     */
+    public interface PlaceholderReplaceAction {
+
+        /**
+         * Method to replace placeholders in string with relevant case-specific values.
+         *
+         * @param string - string to replace placeholders in
+         * @return updated string with modified placeholders
+         */
+        String replace(String string);
     }
 
     /**
@@ -54,7 +69,7 @@ public class PlaceholderManager {
          * Constructor for producing attributes specific to placeholder.
          *
          * @param representation - placeholder identifier (enclosed in % in configuration file)
-         * @param replaceAction - implementation containing method on how to go about the replacement of placeholder
+         * @param replaceAction  - implementation containing method on how to go about the replacement of placeholder
          */
         public Placeholder(String representation, PlaceholderReplaceAction replaceAction) {
 
@@ -63,7 +78,6 @@ public class PlaceholderManager {
         }
 
         /**
-         *
          * @return Placeholder representation
          */
         public String getRepresentation() {
@@ -72,29 +86,12 @@ public class PlaceholderManager {
         }
 
         /**
-         *
          * @return Placeholder's implementation for replacing representation with another value.
          */
-        public PlaceholderReplaceAction getPlaceholderAction() {
+        PlaceholderReplaceAction getPlaceholderAction() {
 
             return replaceAction;
         }
-    }
-
-    /**
-     * Represents the implementation to override for specific placeholders.
-     *
-     * @author TheeNinja
-     */
-    public interface PlaceholderReplaceAction {
-
-        /**
-         * Method to replace placeholders in string with relevant case-specific values.
-         *
-         * @param string - string to replace placeholders in
-         * @return updated string with modified placeholders
-         */
-        public String replace(String string);
     }
 }
 

@@ -2,8 +2,6 @@ package me.theeninja.bungeeteleport;
 
 import org.bukkit.ChatColor;
 
-import javax.xml.soap.Text;
-
 /**
  * Created by TheeNinja on 10/15/2016.
  */

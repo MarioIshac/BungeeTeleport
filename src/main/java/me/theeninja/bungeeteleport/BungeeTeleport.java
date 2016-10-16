@@ -1,14 +1,13 @@
 package me.theeninja.bungeeteleport;
 
-import java.util.logging.Level;
-
+import me.theeninja.bungeeteleport.command.BungeeTeleportCommand;
+import me.theeninja.bungeeteleport.server.ConnectPlayerServer;
+import me.theeninja.bungeeteleport.server.SignClickListenerServer;
 import me.theeninja.bungeeteleport.yaml.ConfigurationHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.theeninja.bungeeteleport.command.BungeeTeleportCommand;
-import me.theeninja.bungeeteleport.server.ConnectPlayerServer;
-import me.theeninja.bungeeteleport.server.SignClickListenerServer;
+import java.util.logging.Level;
 
 /**
  * Main class for BungeeTeleport plugin. Contains onEnable()
@@ -16,75 +15,74 @@ import me.theeninja.bungeeteleport.server.SignClickListenerServer;
  * and stops, respectively. Main class also registers events and plugin
  * message listener channels, which are essential to connecting the player
  * to various servers.
- * 
- * @author TheeNinja
  *
+ * @author TheeNinja
  */
 
 public class BungeeTeleport extends JavaPlugin {
 
-	// Instance of plugin
-	private static BungeeTeleport plugin;
+    // Instance of plugin
+    private static BungeeTeleport plugin;
 
-	/**
-	 * Called when plugin is enabled
-	 * -Initializes plugin
-	 * -Sets up default config
-	 * -Registers event listeners/handlers
-	 * -Registers plugin message listeners
-	 */
-	@Override
-	public void onEnable() {
+    /**
+     * Returns the instance of the main class.
+     *
+     * @return Instance of main class.
+     */
+    public static BungeeTeleport getInstance() {
 
-		plugin = this;
+        return plugin;
+    }
 
-		registerEventListeners();
+    /**
+     * Called when plugin is enabled
+     * -Initializes plugin
+     * -Sets up default config
+     * -Registers event listeners/handlers
+     * -Registers plugin message listeners
+     */
+    @Override
+    public void onEnable() {
+
+        plugin = this;
+
+        registerEventListeners();
         Bukkit.getLogger().log(Level.INFO, "Registered events.");
-		
-		registerPluginMessengerListeners();
+
+        registerPluginMessengerListeners();
         Bukkit.getLogger().log(Level.INFO, "Registered plugin message listeners.");
-		
-		getCommand("bungeeteleport").setExecutor(new BungeeTeleportCommand());
+
+        getCommand("bungeeteleport").setExecutor(new BungeeTeleportCommand());
         Bukkit.getLogger().log(Level.INFO, "Registered commands.");
 
         ConfigurationHandler.setUpDefaultConfig();
         Bukkit.getLogger().log(Level.INFO, "Registered configuration.");
-	}
+    }
 
-	/**
-	 * Called when plugin is disabled
-	 */
-	@Override
-	public void onDisable() {
-		
-		plugin = null;
-	}
+    /**
+     * Called when plugin is disabled
+     */
+    @Override
+    public void onDisable() {
 
-	/**
-	 * Returns the instance of the main class.
-	 * 
-	 * @return Instance of main class.
-	 */
-	public static BungeeTeleport getInstance() {
+        plugin = null;
+    }
 
-		return plugin;
-	}
+    /**
+     * Registers the event handlers' listeners.
+     */
+    private void registerEventListeners() {
 
-	/**
-	 * Registers the event handlers' listeners.
-	 */
-	private void registerEventListeners() {
+        getServer().getPluginManager().registerEvents(new SignBuildListener(), this);
+        getServer().getPluginManager().registerEvents(new SignClickListenerServer(), this);
+    }
 
-		getServer().getPluginManager().registerEvents(new SignBuildListener(), this);
-		getServer().getPluginManager().registerEvents(new SignClickListenerServer(), this);
-	}
+    /**
+     * Registers the plugin messangers' listeners.
+     */
+    private void registerPluginMessengerListeners() {
 
-	/**
-	 * Registers the plugin messangers' listeners.
-	 */
-	private void registerPluginMessengerListeners() {
-
-		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-		getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new ConnectPlayerServer());
-	}
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new ConnectPlayerServer());
+    }
 }

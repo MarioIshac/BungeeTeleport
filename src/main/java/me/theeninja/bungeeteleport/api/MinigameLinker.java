@@ -5,19 +5,20 @@ import org.bukkit.plugin.Plugin;
 /**
  * Application User Interface for registering (API)
  * private "minigame" plugins.
- * 
- * @author TheeNinja
  *
+ * @author TheeNinja
  */
 
-public class MinigameLinker {
-	private static MinigameLinker instance = new MinigameLinker(); 
-	public void registerLink(Plugin plugin) {
+class MinigameLinker {
+    private static MinigameLinker instance = new MinigameLinker();
 
-	}
-	public static MinigameLinker getAPI() {
-		return instance;
-	}
+    public static MinigameLinker getAPI() {
+        return instance;
+    }
+
+    public void registerLink(Plugin plugin) {
+
+    }
 }
 
 

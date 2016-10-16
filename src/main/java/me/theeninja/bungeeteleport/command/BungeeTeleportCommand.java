@@ -1,19 +1,17 @@
 package me.theeninja.bungeeteleport.command;
 
+import me.theeninja.bungeeteleport.BungeeTeleport;
 import me.theeninja.bungeeteleport.BungeeTeleportMessageDefaults;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import me.theeninja.bungeeteleport.BungeeTeleport;
-
 /**
  * BungeeTeleport command implementation, includes implementation
  * for /bungeeteleport
  *
  * @author TheeNinja
- *
  */
 public class BungeeTeleportCommand implements CommandExecutor {
 
@@ -21,13 +19,13 @@ public class BungeeTeleportCommand implements CommandExecutor {
      * Handling for /bungeeteleport
      *
      * @param commandSender - command executor (such as a player or console)
-     * @param command - command object
-     * @param commandLabel - command name
-     * @param commandArgs - arguements of the command
+     * @param command       - command object
+     * @param commandLabel  - command name
+     * @param commandArgs   - arguements of the command
      * @return boolean - whether the command was successfully processed
      */
     @Override
-	public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] commandArgs) {
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] commandArgs) {
 
         if (command.getLabel().equalsIgnoreCase("bungeeteleport")) {
 
@@ -82,11 +80,11 @@ public class BungeeTeleportCommand implements CommandExecutor {
 
                             for (int valueArgCounter = 3; valueArgCounter < commandArgs.length; valueArgCounter++) {
 
-                                configurationValueStringBuilder.append(commandArgs[valueArgCounter] + " ");
+                                configurationValueStringBuilder.append(commandArgs[valueArgCounter]).append(" ");
                             }
 
                             String configurationValue = configurationValueStringBuilder.toString();
-                            configurationValue.substring(0, configurationValue.length() - 1);
+                            configurationValue = configurationValue.substring(0, configurationValue.length() - 1);
 
                             BungeeTeleport.getInstance().getConfig().set(commandArgs[2], configurationValue);
 
@@ -116,5 +114,5 @@ public class BungeeTeleportCommand implements CommandExecutor {
             }
         }
         return true;
-	}	
+    }
 }

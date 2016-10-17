@@ -1,12 +1,27 @@
-# NoPermissionUseMessage - Sent when a user does not have permission to use a bungeeteleport sign.
-# NoPermissionBuildMessage - Sent when a user does not have permission to build a bungeeteleport sign.
-# SuccessfulConnectionMessage - Sent when a user successfully connects to another server on the network through BungeeTeleport
-# # # # # # # # #
-# Placeholders:
-# %server% - server the player is connecting to
+# NoPermissionUseMessage - Sent when a user does not have permission to use a bungeeteleport sign.          #
+# NoPermissionBuildMessage - Sent when a user does not have permission to build a bungeeteleport sign.      #
+# SuccessfulConnectionMessage - Sent when a user successfully connects to a server through BungeeTeleport.  #
+# SuccessfulBuildMessage - Sent when a user successfully builds a BungeeTeleport sign.                      #
+# InvalidServerMessage - Sent when the server that has a requested connection to is invalid.                #
+# Colors.Comment - Represents default color for comment lines                                               #
+# Colors.Server - Represents default color for server line                                                  #
+# CurrentPlayersOutOfMaxFormat - Represents the format used to display the player information of the sign.  #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#                     # Placeholders: #                         #
+# %server% - server the player is connecting to                 #
+# # # Specifically for (optional) player amount information:    #
+# # %currentplayers% - amount of current players on the server  #
+# # %maxplayers% - max number of players allowed on the server  #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Author: TheeNinja (https://www.spigotmc.org/members/69455)  #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 NoPermissionUseMessage: '&5[BungeeTeleport] &dYou do not have permission to use this BungeeTeleport sign!'
 NoPermissionBuildMessage: '&5[BungeeTeleport] &dYou do not have permission to build this BungeeTeleport sign!'
 SuccessfulConnectionMessage: '&5[BungeeTeleport] &dYou have successfully connected to %server%!'
 SuccessfulBuildMessage: '&5[BungeeTeleport] &dYou have successfully built a BungeeTeleport sign!'
 InvalidServerMessage: '&5[BungeeTeleport] &d%server% is not a valid server to connect to!'
+Colors:
+  Comment: '&c'
+  Server: '&5'
+CurrentPlayersOutOfMaxFormat: '&2&currentplayers% &0/ &2%maxplayers'

@@ -15,6 +15,10 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Author: TheeNinja (https://www.spigotmc.org/members/69455)  #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#                                                             #
+#           DO NOT MODIFY/ALTER PLAYER_UPDATE_SIGNS           #
+#                                                             #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 NoPermissionUseMessage: '&5[BungeeTeleport] &dYou do not have permission to use this BungeeTeleport sign!'
 NoPermissionBuildMessage: '&5[BungeeTeleport] &dYou do not have permission to build this BungeeTeleport sign!'
@@ -25,3 +29,5 @@ Colors:
   Comment: '&c'
   Server: '&5'
 CurrentPlayersOutOfMaxFormat: '&2&currentplayers% &0/ &2%maxplayers'
+
+PLAYER_UPDATE_SIGNS:

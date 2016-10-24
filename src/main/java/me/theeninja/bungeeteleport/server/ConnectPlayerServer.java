@@ -4,7 +4,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import me.theeninja.bungeeteleport.BungeeTeleport;
-import me.theeninja.bungeeteleport.PlaceholderManager;
+import me.theeninja.bungeeteleport.placeholder.PlaceholderManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -66,6 +66,12 @@ public class ConnectPlayerServer implements PluginMessageListener {
 
         if (subchannel.equals("GetServers")) {
             SignClickListenerServer.serverList = Arrays.asList(in.readUTF().split(", "));
+        }
+
+        if (subchannel.equals("PlayerCount")) {
+            SignPlayerInformationUpdateHandler.serverPlayerCounts.put(
+            /* Server name  */ in.readUTF(),
+            /* Player count */ in.readInt());
         }
     }
 

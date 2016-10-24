@@ -1,7 +1,7 @@
 package me.theeninja.bungeeteleport.command;
 
 import me.theeninja.bungeeteleport.BungeeTeleport;
-import me.theeninja.bungeeteleport.BungeeTeleportMessageDefaults;
+import me.theeninja.bungeeteleport.utils.BungeeTeleportMessageDefaults;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

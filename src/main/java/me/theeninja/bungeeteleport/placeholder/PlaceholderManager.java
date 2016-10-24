@@ -1,4 +1,4 @@
-package me.theeninja.bungeeteleport;
+package me.theeninja.bungeeteleport.placeholder;
 
 import org.bukkit.Bukkit;
 

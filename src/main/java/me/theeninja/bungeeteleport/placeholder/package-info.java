@@ -1,0 +1,1 @@
+package me.theeninja.bungeeteleport.placeholder;

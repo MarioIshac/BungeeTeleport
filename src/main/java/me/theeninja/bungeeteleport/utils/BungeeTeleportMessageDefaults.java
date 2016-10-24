@@ -1,4 +1,4 @@
-package me.theeninja.bungeeteleport;
+package me.theeninja.bungeeteleport.utils;
 
 import org.bukkit.ChatColor;
 

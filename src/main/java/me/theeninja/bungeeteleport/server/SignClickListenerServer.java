@@ -55,7 +55,7 @@ public class SignClickListenerServer implements Listener {
         // whether the server on the second line of the sign is valid
         connectPlayer.updateServerList();
 
-        // Connec the player 1/2 of a second later; otherwise the server
+        // Connect the player 1/2 of a second later; otherwise the server
         // list would not be updated in time
         // * subject to change
         Bukkit.getScheduler().runTaskLater(BungeeTeleport.getInstance(), connectPlayer::connectPlayer, 10);

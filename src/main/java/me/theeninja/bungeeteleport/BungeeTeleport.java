@@ -5,8 +5,10 @@ import me.theeninja.bungeeteleport.server.ConnectPlayerServer;
 import me.theeninja.bungeeteleport.server.SignClickListenerServer;
 import me.theeninja.bungeeteleport.yaml.ConfigurationHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Collection;
 import java.util.logging.Level;
 
 /**
@@ -84,5 +86,17 @@ public class BungeeTeleport extends JavaPlugin {
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new ConnectPlayerServer());
+    }
+
+
+    public static Player getDummyPlayer() {
+
+        Collection<? extends Player> onlinePlayers = Bukkit.getServer().getOnlinePlayers();
+
+        if (onlinePlayers.isEmpty()) {
+            return null;
+        }
+
+        return onlinePlayers.iterator().next(); // Equivalent to getting an element
     }
 }

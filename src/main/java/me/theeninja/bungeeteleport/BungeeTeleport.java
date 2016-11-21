@@ -7,6 +7,9 @@ import me.theeninja.bungeeteleport.server.playerinformation.SignPlayerInformatio
 import me.theeninja.bungeeteleport.yaml.ConfigurationHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collection;
@@ -22,7 +25,9 @@ import java.util.logging.Level;
  * @author TheeNinja
  */
 
-public class BungeeTeleport extends JavaPlugin {
+public class BungeeTeleport extends JavaPlugin implements Listener {
+
+    private boolean usePlayerJoinEvent;
 
     // Instance of plugin
     private static BungeeTeleport plugin;
@@ -61,18 +66,17 @@ public class BungeeTeleport extends JavaPlugin {
         ConfigurationHandler.setUpDefaultConfig();
         Bukkit.getLogger().log(Level.INFO, "Registered configuration.");
 
-        ConnectPlayerServer.updateServerListWithDummyPlayer();
+        if (getDummyPlayer() != null) {
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            manageServerIPMaxPlayerCountRelationships();
 
-            SignPlayerInformationUpdateHandler.receiveIPOfServerOnNetworks();
+            usePlayerJoinEvent = false;
+        }
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+        else {
 
-                SignPlayerInformationUpdateHandler.serverToMaxPlayers =
-                        SignPlayerInformationUpdateHandler.getMaxPlayersOnAllServers();
-            }, 10);
-        }, 10);
+            usePlayerJoinEvent = true;
+        }
     }
 
     /**
@@ -91,6 +95,7 @@ public class BungeeTeleport extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new SignBuildListener(), this);
         getServer().getPluginManager().registerEvents(new SignClickListenerServer(), this);
+        getServer().getPluginManager().registerEvents(this, this);
     }
 
     /**
@@ -112,5 +117,32 @@ public class BungeeTeleport extends JavaPlugin {
         }
 
         return onlinePlayers.iterator().next(); // Equivalent to getting an element
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent e) {
+
+        if (usePlayerJoinEvent) {
+
+            Bukkit.getScheduler().scheduleSyncDelayedTask(this, this::manageServerIPMaxPlayerCountRelationships, 20);
+
+            usePlayerJoinEvent = false;
+        }
+    }
+
+    private void manageServerIPMaxPlayerCountRelationships() {
+
+        ConnectPlayerServer.updateServerListWithDummyPlayer();
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+
+            SignPlayerInformationUpdateHandler.receiveIPOfServerOnNetworks();
+
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+
+                SignPlayerInformationUpdateHandler.serverToMaxPlayers =
+                        SignPlayerInformationUpdateHandler.getMaxPlayersOnAllServers();
+            }, 10);
+        }, 10);
     }
 }

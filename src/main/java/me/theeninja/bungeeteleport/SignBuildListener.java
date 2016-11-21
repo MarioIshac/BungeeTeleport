@@ -75,7 +75,6 @@ class SignBuildListener implements Listener {
 
         if (!p.isOp()) {
             p.sendMessage("You are not an operator; sign not broken.");
-            return;
         }
     }
 

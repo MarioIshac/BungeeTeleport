@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 public class SignPlayerInformationUpdateHandler {
 
     public static Map<String, Integer> serverPlayerCounts = new HashMap<>();
-    public static Map<String, Integer> ipToMaxPlayers = new HashMap<>();
     public static Map<String, String> serverToIP = new HashMap<>();
     public static Map<String, Integer> serverToMaxPlayers = new HashMap<>();
 
@@ -41,7 +40,7 @@ public class SignPlayerInformationUpdateHandler {
     public void registerUpdates() {
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(BungeeTeleport.getInstance(), this::update, 0, 10);
-    };
+    }
 
     private void update() {
 

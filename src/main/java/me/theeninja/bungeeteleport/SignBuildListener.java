@@ -1,5 +1,6 @@
 package me.theeninja.bungeeteleport;
 
+import me.theeninja.bungeeteleport.server.playerinformation.SignPlayerInformationUpdateHandler;
 import org.bukkit.*;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -7,6 +8,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
+
+import java.util.logging.Level;
 
 /**
  * Event listener for when a player builds a BungeeTeleport
@@ -32,11 +35,18 @@ class SignBuildListener implements Listener {
             return;
         }
 
+        Bukkit.getLogger().log(Level.INFO, "Created BungeeTeleport sign with player information option: " + e.getLine(2).equalsIgnoreCase("p"));
+        Bukkit.getLogger().log(Level.INFO, "Target server sign assigned to: " + e.getLine(1));
+
         if (e.getLine(2).equalsIgnoreCase("p")) { // Optional server player information option
 
             Location signLocation = e.getBlock().getLocation();
 
             BungeeTeleport.getInstance().getConfig().getStringList("PLAYER_UPDATE_SIGNS").add(serializeLocation(signLocation));
+
+            SignPlayerInformationUpdateHandler handler = new SignPlayerInformationUpdateHandler(e.getLine(1), signLocation);
+
+            handler.registerUpdates();
         }
 
         // Update colors of sign to correlate with colors of valid BungeeTeleport sign
@@ -67,21 +77,14 @@ class SignBuildListener implements Listener {
             p.sendMessage("You are not an operator; sign not broken.");
             return;
         }
-
-        if (sign.getLine(2).equalsIgnoreCase("p")) { // Optional server player information option
-
-            Location signLocation = e.getBlock().getLocation();
-
-            BungeeTeleport.getInstance().getConfig().getStringList("PLAYER_UPDATE_SIGNS").remove(serializeLocation(signLocation));
-        }
     }
 
     String serializeLocation(Location signLocation) {
 
         int signLocationX = signLocation.getBlockX();
         int signLocationY = signLocation.getBlockY();
-        int signLocationZ = signLocation.getBlockZ();
         World signLocationWorld = signLocation.getWorld();
+        int signLocationZ = signLocation.getBlockZ();
 
         return signLocationX + ":" + signLocationY + ":" + signLocationZ + ":" + signLocationWorld;
     }
@@ -96,13 +99,5 @@ class SignBuildListener implements Listener {
         World signLocationWorld = Bukkit.getWorld(locationElements[3]);
 
         return new Location(signLocationWorld, signLocationX, signLocationY, signLocationZ);
-    }
-
-    void registerUpdatesForPlayerInformationSign(Sign sign, Location location) {
-
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(BungeeTeleport.getInstance(), () -> {
-
-
-        }, 20, 0 );
     }
 }

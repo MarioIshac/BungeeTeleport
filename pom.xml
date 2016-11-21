@@ -1,4 +1,4 @@
-<!-- Specifies the dependencing and project-specific information of
+<!-- Specifies the dependencies and project-specific information of
 	 the project. -->
 
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"

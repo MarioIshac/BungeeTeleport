@@ -5,12 +5,14 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import me.theeninja.bungeeteleport.BungeeTeleport;
 import me.theeninja.bungeeteleport.placeholder.PlaceholderManager;
+import me.theeninja.bungeeteleport.server.playerinformation.SignPlayerInformationUpdateHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -65,15 +67,39 @@ public class ConnectPlayerServer implements PluginMessageListener {
         String subchannel = in.readUTF();
 
         if (subchannel.equals("GetServers")) {
-            SignClickListenerServer.serverList = Arrays.asList(in.readUTF().split(", "));
+
+            List<String> serverList = Arrays.asList(in.readUTF().split(", "));
+
+            Bukkit.getLogger().log(Level.INFO, "Received GetServers call, setting SignClickListenerServerList to " + serverList);
+            SignClickListenerServer.serverList = serverList;
         }
 
         if (subchannel.equals("PlayerCount")) {
+
+            String targetServer = in.readUTF();
+            int targetServerPlayerCount = in.readInt();
+
+            Bukkit.getLogger().log(Level.INFO, "Received PlayerCount call for server " + targetServer + ". Player count is " + targetServerPlayerCount);
             SignPlayerInformationUpdateHandler.serverPlayerCounts.put(
-            /* Server name  */ in.readUTF(),
-            /* Player count */ in.readInt());
+            /* Server name  */ targetServer,
+            /* Player count */ targetServerPlayerCount);
+        }
+
+        if (subchannel.equals("ServerIP")) {
+
+            String targetServer = in.readUTF();
+            String serverIP = in.readUTF();
+            short serverPort = in.readShort();
+
+            Bukkit.getLogger().log(Level.INFO, "Received ServerIP call for server " + targetServer + ". Corresponding IP is " + serverIP + ":" + serverPort);
+            SignPlayerInformationUpdateHandler.serverToIP.put(
+                    targetServer, // Server name
+                    serverIP + // Server IP
+                            ":" +
+                    serverPort); // Server port;
         }
     }
+
 
     /**
      * Connects the player declared with the instance to the server
@@ -88,10 +114,7 @@ public class ConnectPlayerServer implements PluginMessageListener {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
 
         PlaceholderManager.Placeholder serverPlaceholder = new PlaceholderManager.Placeholder("server");
-        serverPlaceholder.setPlaceholderAction(string -> {
-            string = string.replace(serverPlaceholder.getConfigurationRepresentation(), this.server);
-            return string;
-        });
+        serverPlaceholder.setPlaceholderAction(string -> string.replace(serverPlaceholder.getConfigurationRepresentation(), this.server));
 
         PlaceholderManager placeholderManager = new PlaceholderManager(new PlaceholderManager.Placeholder[] {serverPlaceholder});
 
@@ -126,5 +149,12 @@ public class ConnectPlayerServer implements PluginMessageListener {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("GetServers");
         player.sendPluginMessage(BungeeTeleport.getInstance(), "BungeeCord", out.toByteArray());
+    }
+
+    public static void updateServerListWithDummyPlayer() {
+
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("GetServers");
+        BungeeTeleport.getDummyPlayer().sendPluginMessage(BungeeTeleport.getInstance(), "BungeeCord", out.toByteArray());
     }
 }

@@ -25,7 +25,7 @@ import java.util.List;
 public class SignClickListenerServer implements Listener {
 
     // Stores list of servers - updated when player attempts to connect to a server
-    static List<String> serverList;
+    public static List<String> serverList;
 
     @EventHandler
     public void onSignClick(PlayerInteractEvent e) {

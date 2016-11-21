@@ -9,8 +9,6 @@
 # Eclipse Projects
 .project
 
-/bin/
-
 # IDEA Projects
 /.idea/
 BungeeTeleport.iml

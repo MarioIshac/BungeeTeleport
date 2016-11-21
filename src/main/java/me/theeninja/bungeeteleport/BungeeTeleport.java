@@ -3,6 +3,7 @@ package me.theeninja.bungeeteleport;
 import me.theeninja.bungeeteleport.command.BungeeTeleportCommand;
 import me.theeninja.bungeeteleport.server.ConnectPlayerServer;
 import me.theeninja.bungeeteleport.server.SignClickListenerServer;
+import me.theeninja.bungeeteleport.server.playerinformation.SignPlayerInformationUpdateHandler;
 import me.theeninja.bungeeteleport.yaml.ConfigurationHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -59,6 +60,19 @@ public class BungeeTeleport extends JavaPlugin {
 
         ConfigurationHandler.setUpDefaultConfig();
         Bukkit.getLogger().log(Level.INFO, "Registered configuration.");
+
+        ConnectPlayerServer.updateServerListWithDummyPlayer();
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+
+            SignPlayerInformationUpdateHandler.receiveIPOfServerOnNetworks();
+
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+
+                SignPlayerInformationUpdateHandler.serverToMaxPlayers =
+                        SignPlayerInformationUpdateHandler.getMaxPlayersOnAllServers();
+            }, 10);
+        }, 10);
     }
 
     /**
@@ -80,7 +94,7 @@ public class BungeeTeleport extends JavaPlugin {
     }
 
     /**
-     * Registers the plugin messangers' listeners.
+     * Registers the plugin messengers' listeners.
      */
     private void registerPluginMessengerListeners() {
 

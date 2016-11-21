@@ -28,6 +28,6 @@ InvalidServerMessage: '&5[BungeeTeleport] &d%server% is not a valid server to co
 Colors:
   Comment: '&c'
   Server: '&5'
-CurrentPlayersOutOfMaxFormat: '&2&currentplayers% &0/ &2%maxplayers'
+CurrentPlayersOutOfMaxFormat: '&2&currentplayers% &0/ &2%maxplayers%'
 
 PLAYER_UPDATE_SIGNS:

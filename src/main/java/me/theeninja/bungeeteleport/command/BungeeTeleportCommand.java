@@ -21,7 +21,7 @@ public class BungeeTeleportCommand implements CommandExecutor {
      * @param commandSender - command executor (such as a player or console)
      * @param command       - command object
      * @param commandLabel  - command name
-     * @param commandArgs   - arguements of the command
+     * @param commandArgs   - arguments of the command
      * @return boolean - whether the command was successfully processed
      */
     @Override

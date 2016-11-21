@@ -3,7 +3,7 @@ package me.theeninja.bungeeteleport.utils;
 import org.bukkit.ChatColor;
 
 /**
- * Class containting global plugin variables for messages
+ * Class containing global plugin variables for messages
  *
  * @author TheeNinja
  */

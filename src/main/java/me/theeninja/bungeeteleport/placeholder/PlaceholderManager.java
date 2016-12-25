@@ -93,22 +93,10 @@ public class PlaceholderManager {
             this.configurationRepresentation = "%" + representation + "%";
         }
 
-        public void setRepresentation(String representation) {
-
-            this.representation = representation;
-        }
-
         public String getConfigurationRepresentation() {
 
             return configurationRepresentation;
         }
-
-        public void setPlaceholderAction(PlaceholderReplaceAction replaceAction) {
-
-            this.replaceAction = replaceAction;
-        }
-
-
 
         /**
          * @return Placeholder representation
@@ -118,12 +106,22 @@ public class PlaceholderManager {
             return representation;
         }
 
+        public void setRepresentation(String representation) {
+
+            this.representation = representation;
+        }
+
         /**
          * @return Placeholder's implementation for replacing representation with another value.
          */
         PlaceholderReplaceAction getPlaceholderAction() {
 
             return replaceAction;
+        }
+
+        public void setPlaceholderAction(PlaceholderReplaceAction replaceAction) {
+
+            this.replaceAction = replaceAction;
         }
     }
 }

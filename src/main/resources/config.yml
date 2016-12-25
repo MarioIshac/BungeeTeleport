@@ -1,12 +1,19 @@
-# NoPermissionUseMessage - Sent when a user does not have permission to use a bungeeteleport sign.          #
-# NoPermissionBuildMessage - Sent when a user does not have permission to build a bungeeteleport sign.      #
-# SuccessfulConnectionMessage - Sent when a user successfully connects to a server through BungeeTeleport.  #
-# SuccessfulBuildMessage - Sent when a user successfully builds a BungeeTeleport sign.                      #
-# InvalidServerMessage - Sent when the server that has a requested connection to is invalid.                #
-# Colors.Comment - Represents default color for comment lines                                               #
-# Colors.Server - Represents default color for server line                                                  #
-# CurrentPlayersOutOfMaxFormat - Represents the format used to display the player information of the sign.  #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# NoPermissionUseMessage - Sent when a user does not have permission to use a bungeeteleport sign.                                   #
+# NoPermissionBuildMessage - Sent when a user does not have permission to build a bungeeteleport sign.                               #
+# SuccessfulConnectionMessage - Sent when a user successfully connects to a server through BungeeTeleport.                           #
+# SuccessfulBuildMessage - Sent when a user successfully builds a BungeeTeleport sign.                                               #
+# InvalidServerMessage - Sent when the server that has a requested connection to is invalid.                                         #
+# ServerConnectionDelay - Delay (in seconds) between right clicking BungeeTeleport sign and connection to server                     #
+# Colors.Comment - Represents default color for comment lines                                                                        #
+# Colors.Server - Represents default color for server line                                                                           #
+# PlayerInformationOptions.CurrentPlayersOutOfMaxFormat - Represents the format used to display the player information of the sign.  #
+# PlayerInformationOptions.SignUpdateRadius - Represents the radius in blocks that contains the players that will be shown the       #
+#   sign updates. Due to this, a smaller value indicates less lag. If you are encountering difficulties involving using the player   #
+#   information option of multiple signs, lower this value to reduce lag.                                                            #
+# PlayerInformationOptions.SignUpdatePeriod - Represents how often, in seconds, the sign updates the player count of the             #
+#   corresponding server. Due to this, a larger period indicates less lag. If you are encountering difficulties involving using the  #
+#   player information option of multiple signs, lower this value to reduce lag.                                                     #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #                     # Placeholders: #                         #
 # %server% - server the player is connecting to                 #
 # # # Specifically for (optional) player amount information:    #
@@ -25,9 +32,13 @@ NoPermissionBuildMessage: '&5[BungeeTeleport] &dYou do not have permission to bu
 SuccessfulConnectionMessage: '&5[BungeeTeleport] &dYou have successfully connected to %server%!'
 SuccessfulBuildMessage: '&5[BungeeTeleport] &dYou have successfully built a BungeeTeleport sign!'
 InvalidServerMessage: '&5[BungeeTeleport] &d%server% is not a valid server to connect to!'
+ServerConnectionDelay: 0.5
 Colors:
   Comment: '&c'
   Server: '&5'
-CurrentPlayersOutOfMaxFormat: '&2&currentplayers% &0/ &2%maxplayers%'
+PlayerInformationOptions:
+  CurrentPlayersOutOfMaxFormat: '&2%currentplayers% &0/ &2%maxplayers%'
+  SignUpdateRadius: 8
+  SignUpdatePeriod: 1
 
 PLAYER_UPDATE_SIGNS:

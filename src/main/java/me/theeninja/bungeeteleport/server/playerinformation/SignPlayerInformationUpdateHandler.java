@@ -3,10 +3,13 @@ package me.theeninja.bungeeteleport.server.playerinformation;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import me.theeninja.bungeeteleport.BungeeTeleport;
+import me.theeninja.bungeeteleport.SignBuildListener;
+import me.theeninja.bungeeteleport.placeholder.PlaceholderManager;
 import me.theeninja.bungeeteleport.server.SignClickListenerServer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
@@ -25,7 +28,8 @@ public class SignPlayerInformationUpdateHandler {
     public static Map<String, String> serverToIP = new HashMap<>();
     public static Map<String, Integer> serverToMaxPlayers = new HashMap<>();
 
-    private String format;
+    public static Map<Location, Integer> registeredSignsToUpdate = new HashMap<>();
+
     private String server;
     private Location location;
 
@@ -33,13 +37,115 @@ public class SignPlayerInformationUpdateHandler {
 
         this.location = location;
         this.server = ChatColor.stripColor(server);
-
-        this.format = BungeeTeleport.getInstance().getConfig().getString("CurrentPlayersOutOfMaxFormat");
     }
 
-    public void registerUpdates() {
+    public static void deserializeSignsFromConfig() {
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(BungeeTeleport.getInstance(), this::update, 0, 10);
+        for (String serializedLocation : BungeeTeleport.getInstance().getConfig().getStringList("PLAYER_UPDATE_SIGNS")) {
+
+            Location deserializedLocation = SignBuildListener.deserializeLocation(serializedLocation);
+
+            Sign sign = (Sign) deserializedLocation.getBlock().getState();
+            String server = sign.getLine(1);
+
+            SignPlayerInformationUpdateHandler handler = new SignPlayerInformationUpdateHandler(server, deserializedLocation);
+
+            registeredSignsToUpdate.put(deserializedLocation, Bukkit.getScheduler().
+                    scheduleSyncRepeatingTask(BungeeTeleport.getInstance(), handler::registerUpdates, 0, 10));
+        }
+    }
+
+    public static HashMap<String, Integer> getMaxPlayersOnAllServers() {
+
+        Bukkit.getLogger().log(Level.INFO, "Getting max players on all servers.");
+
+        HashMap<String, Integer> ipToMaxPlayers = new HashMap<>();
+
+        if (serverToIP.isEmpty()) {
+
+            Bukkit.getLogger().log(Level.SEVERE, "No server/IP relationships found. Please contact developer.");
+        }
+
+        serverToIP.keySet().forEach(server -> {
+
+            Bukkit.getLogger().log(Level.INFO, "The server: " + server + " is registered with the following IP: " + serverToIP.get(server));
+        });
+
+
+        serverToIP.values().forEach(completeIP -> {
+
+            try {
+
+                String ipWithoutPort = completeIP.split(":")[0];
+                int port = Integer.parseInt(completeIP.split(":")[1]);
+
+                Socket socket = new Socket(ipWithoutPort, port);
+
+                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+                DataInputStream in = new DataInputStream(socket.getInputStream());
+
+                out.write(254);
+
+                int b;
+
+                StringBuilder str = new StringBuilder();
+
+                while ((b = in.read()) != -1) {
+
+                    if (b != 0 && b > 16 && b != 255 && b != 23 && b != 24) {
+
+                        str.append((char) b);
+                    }
+                }
+
+                socket.close();
+                String[] data = str.toString().split("§");
+
+                Bukkit.getLogger().log(Level.INFO, "Correlating " + completeIP + " with the max player count: " + Integer.parseInt(data[2]) + ".");
+
+                ipToMaxPlayers.put(completeIP, Integer.parseInt(data[2]) /* Max players on server that has given ip */);
+            } catch (IOException e) {
+
+                e.printStackTrace();
+            }
+        });
+
+
+        HashMap<String, Integer> serverToMaxPlayers = new HashMap<>();
+
+        Map<String, String> ipToServer = serverToIP.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+
+        ipToMaxPlayers.keySet().forEach(ip -> {
+
+            int maxPlayersForIP = ipToMaxPlayers.get(ip);
+            String server = ipToServer.get(ip);
+
+            serverToMaxPlayers.put(server, maxPlayersForIP);
+        });
+
+        return serverToMaxPlayers;
+    }
+
+    public static void receiveIPOfServerOnNetworks() {
+
+        if (SignClickListenerServer.serverList == null) {
+
+            Bukkit.getLogger().log(Level.SEVERE, "serverList is null");
+        }
+
+        SignClickListenerServer.serverList.forEach(server -> {
+
+            ByteArrayDataOutput out = ByteStreams.newDataOutput();
+            out.writeUTF("ServerIP");
+            out.writeUTF(server);
+
+            BungeeTeleport.getDummyPlayer().sendPluginMessage(BungeeTeleport.getInstance(), "BungeeCord", out.toByteArray());
+        });
+    }
+
+    public int registerUpdates() {
+
+        return Bukkit.getScheduler().scheduleSyncRepeatingTask(BungeeTeleport.getInstance(), this::update, 0, 10);
     }
 
     private void update() {
@@ -75,93 +181,45 @@ public class SignPlayerInformationUpdateHandler {
 
             int currentNumberOfPlayers = serverPlayerCounts.get(server);
 
-            Sign sign = (Sign) location.getBlock().getState();
+            Sign sign;
 
-            sign.setLine(2, currentNumberOfPlayers + " / " + maxPlayers);
-            sign.update();
+            BlockState blockAtLocaton = location.getBlock().getState();
 
-            Bukkit.getLogger().log(Level.INFO, "Updated sign player information to " + currentNumberOfPlayers + " / " + maxPlayers);
-        }, 5);
-    }
+            if (blockAtLocaton instanceof Sign) {
 
-    public static HashMap<String, Integer> getMaxPlayersOnAllServers() {
-
-        Bukkit.getLogger().log(Level.INFO, "Getting max players on all servers.");
-
-        HashMap<String, Integer> ipToMaxPlayers = new HashMap<>();
-
-        if (serverToIP.isEmpty()) {
-
-            Bukkit.getLogger().log(Level.SEVERE, "No server/IP relationships found. Please contact developer.");
-        }
-
-        // printing out server to ip
-        for (String server : serverToIP.keySet()) {
-
-            Bukkit.getLogger().log(Level.INFO, "The server: " + server + " is registered with the following IP: " + serverToIP.get(server));
-        }
-
-        for (String completeIP : serverToIP.values()) {
-
-            Bukkit.getLogger().log(Level.INFO, "Retrieving max player count of IP: " + completeIP);
-
-            try {
-                String ipWithoutPort = completeIP.split(":")[0];
-                int port = Integer.parseInt(completeIP.split(":")[1]);
-
-                Socket socket = new Socket(ipWithoutPort, port);
-
-                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-                DataInputStream in = new DataInputStream(socket.getInputStream());
-
-                out.write(254);
-
-                int b;
-                StringBuilder str = new StringBuilder();
-                while ((b = in.read()) != -1) {
-                    if (b != 0 && b > 16 && b != 255 && b != 23 && b != 24) {
-                        // Not sure what use the two characters are so I omit them
-                        str.append((char) b);
-                        // System.out.println(b + ":" + ((char) b));
-                    }
-                }
-
-                socket.close();
-                String[] data = str.toString().split("§");
-
-                Bukkit.getLogger().log(Level.INFO, "Correlating "  + completeIP + " with the max player count: " + Integer.parseInt(data[2]));
-
-                ipToMaxPlayers.put(completeIP, Integer.parseInt(data[2]) /* Max players on server that has given ip */);
-            } catch (IOException e) {
-
-                e.printStackTrace();
+                sign = (Sign) location.getBlock().getState();
             }
-        }
 
-        HashMap<String, Integer> serverToMaxPlayers = new HashMap<>();
+            else {
 
-        Map<String, String> ipToServer = serverToIP.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+                return;
+            }
 
-        for (String ip : ipToMaxPlayers.keySet()) {
+            String targetLignText = BungeeTeleport.getInstance().getConfig().getString("PlayerInformationOptions.CurrentPlayersOutOfMaxFormat");
 
-            int maxPlayersForIP = ipToMaxPlayers.get(ip);
-            String server = ipToServer.get(ip);
+            PlaceholderManager.Placeholder currentPlayersPlaceholder = new PlaceholderManager.Placeholder("currentplayers");
+            currentPlayersPlaceholder.setPlaceholderAction(string -> string.replace(currentPlayersPlaceholder.getConfigurationRepresentation(), String.valueOf(currentNumberOfPlayers)));
 
-            serverToMaxPlayers.put(server, maxPlayersForIP);
-        }
+            PlaceholderManager.Placeholder maxPlayersPlaceholder = new PlaceholderManager.Placeholder("maxplayers");
+            maxPlayersPlaceholder.setPlaceholderAction(string -> string.replace(maxPlayersPlaceholder.getConfigurationRepresentation(), String.valueOf(maxPlayers)));
 
-        return serverToMaxPlayers;
-    }
+            PlaceholderManager placeholderManager = new PlaceholderManager(new PlaceholderManager.Placeholder[] {currentPlayersPlaceholder, maxPlayersPlaceholder});
 
-    public static void receiveIPOfServerOnNetworks() {
+            targetLignText = placeholderManager.replacePlaceholders(targetLignText);
+            targetLignText = ChatColor.translateAlternateColorCodes('&', targetLignText);
 
-        for (String server : SignClickListenerServer.serverList) {
+            for (Player targetPlayer : Bukkit.getOnlinePlayers()) {
 
-            ByteArrayDataOutput out = ByteStreams.newDataOutput();
-            out.writeUTF("ServerIP");
-            out.writeUTF(server);
+                if (targetPlayer.getLocation().distance(location) <=
+                        BungeeTeleport.getInstance().getConfig().getDouble("PlayerInformationOptions.SignUpdateRadius")) {
 
-            BungeeTeleport.getDummyPlayer().sendPluginMessage(BungeeTeleport.getInstance(), "BungeeCord", out.toByteArray());
-        }
+                    String[] targetArrayOfLines = sign.getLines();
+                    targetArrayOfLines[2] = targetLignText;
+
+                    targetPlayer.sendSignChange(location, targetArrayOfLines);
+                }
+            }
+        }, // Configuration value represents seconds, multiplied by 20 to represent ticks
+          (long) (20 * BungeeTeleport.getInstance().getConfig().getDouble("PlayerInformationOptions.SignUpdatePeriod")));
     }
 }

@@ -9,20 +9,20 @@ import org.bukkit.command.CommandSender;
 
 /**
  * BungeeTeleport command implementation, includes implementation
- * for /bungeeteleport
+ * for /bungeeteleport.
  *
  * @author TheeNinja
  */
 public class BungeeTeleportCommand implements CommandExecutor {
 
     /**
-     * Handling for /bungeeteleport
+     * Handling for when a player executes /bungeeteleport.
      *
-     * @param commandSender - command executor (such as a player or console)
-     * @param command       - command object
-     * @param commandLabel  - command name
-     * @param commandArgs   - arguments of the command
-     * @return boolean - whether the command was successfully processed
+     * @param commandSender command executor (such as a player or console)
+     * @param command       command object
+     * @param commandLabel  command name
+     * @param commandArgs   arguments of the command
+     * @return              whether the command was successfully processed
      */
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] commandArgs) {

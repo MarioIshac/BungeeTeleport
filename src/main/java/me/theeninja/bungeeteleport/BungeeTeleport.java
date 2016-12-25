@@ -1,5 +1,7 @@
 package me.theeninja.bungeeteleport;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import me.theeninja.bungeeteleport.command.BungeeTeleportCommand;
 import me.theeninja.bungeeteleport.server.ConnectPlayerServer;
 import me.theeninja.bungeeteleport.server.SignClickListenerServer;
@@ -27,10 +29,9 @@ import java.util.logging.Level;
 
 public class BungeeTeleport extends JavaPlugin implements Listener {
 
-    private boolean usePlayerJoinEvent;
-
     // Instance of plugin
     private static BungeeTeleport plugin;
+    private boolean usePlayerJoinEvent;
 
     /**
      * Returns the instance of the main class.
@@ -40,6 +41,18 @@ public class BungeeTeleport extends JavaPlugin implements Listener {
     public static BungeeTeleport getInstance() {
 
         return plugin;
+    }
+
+    public static Player getDummyPlayer() {
+
+        Collection<? extends Player> onlinePlayers = Bukkit.getServer().getOnlinePlayers();
+
+        if (onlinePlayers.isEmpty()) {
+
+            return null;
+        }
+
+        return onlinePlayers.iterator().next(); // Equivalent to getting an element
     }
 
     /**
@@ -68,12 +81,10 @@ public class BungeeTeleport extends JavaPlugin implements Listener {
 
         if (getDummyPlayer() != null) {
 
-            manageServerIPMaxPlayerCountRelationships();
+            manageIPServerRelationships();
 
             usePlayerJoinEvent = false;
-        }
-
-        else {
+        } else {
 
             usePlayerJoinEvent = true;
         }
@@ -107,42 +118,76 @@ public class BungeeTeleport extends JavaPlugin implements Listener {
         getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new ConnectPlayerServer());
     }
 
-
-    public static Player getDummyPlayer() {
-
-        Collection<? extends Player> onlinePlayers = Bukkit.getServer().getOnlinePlayers();
-
-        if (onlinePlayers.isEmpty()) {
-            return null;
-        }
-
-        return onlinePlayers.iterator().next(); // Equivalent to getting an element
-    }
-
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
 
         if (usePlayerJoinEvent) {
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(this, this::manageServerIPMaxPlayerCountRelationships, 20);
+            manageIPServerRelationships();
+
+            // Requires casting to listener due to implementing Listener and implementing Plugin at the same time
+            // We only want to unregister the events from this class, not the entire plugin
+            PlayerJoinEvent.getHandlerList().unregister((Listener) this);
 
             usePlayerJoinEvent = false;
         }
     }
 
-    private void manageServerIPMaxPlayerCountRelationships() {
+    private void manageIPServerRelationships() {
 
-        ConnectPlayerServer.updateServerListWithDummyPlayer();
+        int serverListTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            if (SignClickListenerServer.serverList == null || SignClickListenerServer.serverList.isEmpty()) {
 
-            SignPlayerInformationUpdateHandler.receiveIPOfServerOnNetworks();
+                ConnectPlayerServer.updateServerListWithDummyPlayer();
+            }
+        }, 0, 1);
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+        int serverToIPTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
 
-                SignPlayerInformationUpdateHandler.serverToMaxPlayers =
-                        SignPlayerInformationUpdateHandler.getMaxPlayersOnAllServers();
-            }, 10);
-        }, 10);
+            boolean isServerListTaskFinished = !(SignClickListenerServer.serverList == null || SignClickListenerServer.serverList.isEmpty());
+
+            if (isServerListTaskFinished) {
+
+                if (SignPlayerInformationUpdateHandler.serverToIP == null ||
+                        SignClickListenerServer.serverList == null || (SignPlayerInformationUpdateHandler.serverToIP.size() !=
+                        SignClickListenerServer.serverList.size())) {
+
+                    SignPlayerInformationUpdateHandler.receiveIPOfServerOnNetworks();
+                }
+            }
+        }, 0, 1);
+
+        int serverToMaxPlayersTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+
+            boolean isServerTaskFinished = !(SignClickListenerServer.serverList == null || SignClickListenerServer.serverList.isEmpty());
+            boolean isReceiveIPsofServersTaskFinished = !(SignPlayerInformationUpdateHandler.serverToIP == null ||
+                    SignClickListenerServer.serverList == null ||(SignPlayerInformationUpdateHandler.serverToIP.size() !=
+                    SignClickListenerServer.serverList.size()));
+
+            if (isServerTaskFinished && isReceiveIPsofServersTaskFinished) {
+
+                if (SignPlayerInformationUpdateHandler.serverToMaxPlayers == null || SignPlayerInformationUpdateHandler.serverToMaxPlayers.isEmpty()) {
+
+                    SignPlayerInformationUpdateHandler.serverToMaxPlayers = SignPlayerInformationUpdateHandler.getMaxPlayersOnAllServers();
+                }
+            }
+        }, 0, 1);
+
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+
+            boolean isServerTaskFinished = !(SignClickListenerServer.serverList == null || SignClickListenerServer.serverList.isEmpty());
+            boolean isReceiveIPsofServersTaskFinished = !(SignPlayerInformationUpdateHandler.serverToIP == null ||
+                    SignClickListenerServer.serverList == null || (SignPlayerInformationUpdateHandler.serverToIP.size() !=
+                    SignClickListenerServer.serverList.size()));
+            boolean isMaxPlayersTaskFinished = !(SignPlayerInformationUpdateHandler.serverToMaxPlayers == null || SignPlayerInformationUpdateHandler.serverToMaxPlayers.isEmpty());
+
+            if (isServerTaskFinished && isReceiveIPsofServersTaskFinished && isMaxPlayersTaskFinished) {
+
+                Bukkit.getScheduler().cancelTask(serverListTask);
+                Bukkit.getScheduler().cancelTask(serverToIPTask);
+                Bukkit.getScheduler().cancelTask(serverToMaxPlayersTask);
+            }
+        }, 0, 1);
     }
 }

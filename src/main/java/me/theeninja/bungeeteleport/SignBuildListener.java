@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 
+import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -18,19 +19,43 @@ import java.util.logging.Level;
  * @author TheeNinja
  */
 
-class SignBuildListener implements Listener {
+public class SignBuildListener implements Listener {
+
+    private static String serializeLocation(Location signLocation) {
+
+        int signLocationX = signLocation.getBlockX();
+        int signLocationY = signLocation.getBlockY();
+        World signLocationWorld = signLocation.getWorld();
+        int signLocationZ = signLocation.getBlockZ();
+
+        return signLocationX + ";" + signLocationY + ";" + signLocationZ + ";" + signLocationWorld.getName();
+    }
+
+    public static Location deserializeLocation(String string) {
+
+        String[] locationElements = string.split(":");
+
+        int signLocationX = Integer.parseInt(locationElements[0]);
+        int signLocationY = Integer.parseInt(locationElements[1]);
+        int signLocationZ = Integer.parseInt(locationElements[2]);
+        World signLocationWorld = Bukkit.getWorld(locationElements[3]);
+
+        return new Location(signLocationWorld, signLocationX, signLocationY, signLocationZ);
+    }
 
     @EventHandler
     public void onSignBuild(SignChangeEvent e) {
 
         // If not creating BungeeTeleport sign, do not do anything
         if (!e.getLine(0).equalsIgnoreCase("[BungeeTeleport]")) {
+
             return;
         }
 
         Player p = e.getPlayer();
 
         if (!p.isOp()) {
+
             p.sendMessage("You are not an operator; sign not created.");
             return;
         }
@@ -42,17 +67,26 @@ class SignBuildListener implements Listener {
 
             Location signLocation = e.getBlock().getLocation();
 
-            BungeeTeleport.getInstance().getConfig().getStringList("PLAYER_UPDATE_SIGNS").add(serializeLocation(signLocation));
+            List<String> signList = BungeeTeleport.getInstance().getConfig().getStringList("PLAYER_UPDATE_SIGNS");
+            signList.add(serializeLocation(signLocation));
+
+            BungeeTeleport.getInstance().getConfig().set("PLAYER_UPDATE_SIGNS", signList);
+            BungeeTeleport.getInstance().saveConfig();
+
+            Bukkit.getLogger().log(Level.INFO, "Updated configuration with respective information from sign.");
 
             SignPlayerInformationUpdateHandler handler = new SignPlayerInformationUpdateHandler(e.getLine(1), signLocation);
 
-            handler.registerUpdates();
+            SignPlayerInformationUpdateHandler.registeredSignsToUpdate.put(signLocation, handler.registerUpdates());
         }
 
-        // Update colors of sign to correlate with colors of valid BungeeTeleport sign
         e.setLine(0, ChatColor.DARK_PURPLE + "[BungeeTeleport]");
-        e.setLine(2, ChatColor.RED + e.getLine(2));
-        e.setLine(3, ChatColor.RED + e.getLine(3));
+        e.setLine(1, ChatColor.translateAlternateColorCodes('&',
+                BungeeTeleport.getInstance().getConfig().getString("Colors.Server") + e.getLine(1)));
+        e.setLine(2, ChatColor.translateAlternateColorCodes('&',
+                BungeeTeleport.getInstance().getConfig().getString("Colors.Comment") + e.getLine(2)));
+        e.setLine(3, ChatColor.translateAlternateColorCodes('&',
+                BungeeTeleport.getInstance().getConfig().getString("Colors.Comment") + e.getLine(3)));
     }
 
     @EventHandler
@@ -60,43 +94,41 @@ class SignBuildListener implements Listener {
 
         if (!(e.getBlock().getType() == Material.SIGN ||
                 e.getBlock().getType() == Material.SIGN_POST ||
-              e.getBlock().getType() == Material.WALL_SIGN)) {
+                e.getBlock().getType() == Material.WALL_SIGN)) {
+
             return;
         }
 
         Sign sign = (Sign) e.getBlock().getState();
 
         // If not creating BungeeTeleport sign, do not do anything
-        if (!sign.getLine(0).equalsIgnoreCase("[BungeeTeleport]")) {
+        if (!ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("[BungeeTeleport]")) {
+
             return;
         }
 
         Player p = e.getPlayer();
 
         if (!p.isOp()) {
+
             p.sendMessage("You are not an operator; sign not broken.");
+
+            e.setCancelled(true);
+            return;
         }
-    }
 
-    String serializeLocation(Location signLocation) {
+        if (SignPlayerInformationUpdateHandler.registeredSignsToUpdate.get(e.getBlock().getLocation()) != null) {
 
-        int signLocationX = signLocation.getBlockX();
-        int signLocationY = signLocation.getBlockY();
-        World signLocationWorld = signLocation.getWorld();
-        int signLocationZ = signLocation.getBlockZ();
+            int taskIDtoCancel = SignPlayerInformationUpdateHandler.registeredSignsToUpdate.get(e.getBlock().getLocation());
+            SignPlayerInformationUpdateHandler.registeredSignsToUpdate.remove(e.getBlock().getLocation());
 
-        return signLocationX + ":" + signLocationY + ":" + signLocationZ + ":" + signLocationWorld;
-    }
+            List<String> playerUpdateSigns = BungeeTeleport.getInstance().getConfig().getStringList("PLAYER_UPDATE_SIGNS");
+            playerUpdateSigns.remove(serializeLocation(e.getBlock().getLocation()));
+            BungeeTeleport.getInstance().getConfig().set("PLAYER_UPDATE_SIGNS", playerUpdateSigns);
 
-    Location deserializeLocation(String string) {
+            BungeeTeleport.getInstance().saveConfig();
 
-        String[] locationElements = string.split(":");
-
-        int signLocationX = Integer.parseInt(locationElements[0]);
-        int signLocationY = Integer.parseInt(locationElements[1]);
-        int signLocationZ = Integer.parseInt(locationElements[2]);
-        World signLocationWorld = Bukkit.getWorld(locationElements[3]);
-
-        return new Location(signLocationWorld, signLocationX, signLocationY, signLocationZ);
+            Bukkit.getScheduler().cancelTask(taskIDtoCancel);
+        }
     }
 }

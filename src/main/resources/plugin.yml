@@ -9,3 +9,4 @@ commands:
     usage: /<command>
     permission: bungeeteleport.command
     alias: [bungeetp, bt]
+dependencies: [ProtocolLib]

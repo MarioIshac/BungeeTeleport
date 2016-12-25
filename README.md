@@ -18,8 +18,7 @@ Currently planned features: <br>
 <ul>
     <li> Allow more uses for lines 3 and 4, including: </li>
     <ul>
-        <li> Viewing current number of players on server </li>
-        <li> Viewing max number of players possible on server </li>
+        <li> Viewing player slots on server </li>
     </ul>
     <li> Add support for more popular minigames </li>
 </ul>
